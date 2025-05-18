@@ -1,102 +1,82 @@
-# Projet Kubernetes - Déploiement des application de IC Group
- 
-## Objectif
+# 🚀 Projet Kubernetes – Déploiement des Applications de IC Group
 
-Ce projet a pour objectifs de  conteneuriser, configurer et déployer les applications du IC Group dans un cluster Kubernetes tout en assurant la persistance des données des différentes ressources.  
-- Odoo 13.0 : ERP open source  
-- pgAdmin 4 : Interface Web d'administration pour PostgreSQL  
-- Application web développer avec Flask permettant l'accès aux deux services ci-dessus.  
-  
-Source :  [Github repository](https://github.com/OlivierKouokam/mini-projet-5esgi)   
+## 🎯 Objectif
+
+Ce projet vise à **conteneuriser**, **configurer** et **déployer** les applications du IC Group dans un cluster **Kubernetes**, tout en assurant la **persistance des données**.  
+Applications concernées :
+- **Odoo 13.0** : ERP open source
+- **pgAdmin 4** : Interface web pour l'administration PostgreSQL
+- **Application Web Flask** : Fournit une interface d'accès aux deux services ci-dessus
+
+🔗 **Source du projet** : [GitHub Repository](https://github.com/OlivierKouokam/mini-projet-5esgi)
 
 ---
- 
-## Prérequis
- 
-- Cluster Kube
-- Docker 
-- Docker Hub
-- Github 
 
- 
+## ✅ Prérequis
+
+- Cluster Kubernetes fonctionnel  
+- Docker installé  
+- Compte Docker Hub  
+- Compte GitHub
+
 ---
 
-# Mise en place
+## 🧱 Architecture des services
 
-- 3 conteneur Kubernetes au sein du namespace icgroup : 
-PostgreSQL
-Odoo port 30090  
-PgAdmin port 30091
-  
-## Copy du GIT
- 
+Déploiement de **trois conteneurs** dans le namespace `icgroup` :
+- `PostgreSQL`
+- `Odoo` (exposé sur le port **30090**)
+- `pgAdmin` (exposé sur le port **30091**)
+
+---
+
+## 📥 Clonage du projet
+
 ```bash
 git clone https://github.com/qahtan7/kubeprojet-esgi.git
 cd ic-webapp
-```
+````
 
-# Mise en place de l'application avec Docker 
+---
 
-## Dockerfile
+## 🐳 Création de l'application Flask avec Docker
 
-```bash
-# Image de base
+### 📄 Dockerfile
+
+```dockerfile
 FROM python:3.6-alpine
 
-# Définit le répertoire de travail
 WORKDIR /opt
-
-# Copie les fichiers de l’application dans l’image
 COPY . .
 
-# Installe Flask version 1.1.2
 RUN pip install flask==1.1.2
 
-# Expose le port 8080
 EXPOSE 8080
 
-# Définit les variables d’environnement
 ENV ODOO_URL="https://www.odoo.com"
 ENV PGADMIN_URL="https://www.pgadmin.org"
 
-# Lance l’application
 ENTRYPOINT ["python", "app.py"]
 ```
 
-## Test 
+### ⚙️ Construction et test
 
-Build 
 ```bash
-docker build -t ic-webapp:1.0
-```
-[Image1]
-
-Check Image
-```bash
+docker build -t ic-webapp:1.0 .
 docker image ls
-```
-[Image2]
-
-Launch App
-```bash
-docker run -d --name test-ic-webapp -p 8080:8080 -e ODOO_URL="https://www.odoo.com" -e PGADMIN_URL="https://www.pgmain.org" ic-webapp:1.0
-```
-Check
-```bash
+docker run -d --name test-ic-webapp -p 8080:8080 \
+  -e ODOO_URL="https://www.odoo.com" \
+  -e PGADMIN_URL="https://www.pgadmin.org" \
+  ic-webapp:1.0
 docker ps -a
 ```
-[Image3]
 
-Test Web Interface
+🔗 Accès à l’application :
+[http://192.177.10.140:8080](http://192.177.10.140:8080)
 
-```bash
-http://192.177.10.140:8080
-```
-[Image4]
+---
 
-ODOO
-[Image5]
-Creation d'un tag et push sur notre compte DokcerHub
+## 📤 Publication sur Docker Hub
 
 ```bash
 docker login
@@ -104,107 +84,91 @@ docker tag ic-webapp:1.0 aslimani94470/ic-webapp:1.0
 docker push aslimani94470/ic-webapp:1.0
 ```
 
-Check DockerHub 
-[Image6]
+### 🧹 Nettoyage
 
-Docker stop & remove 
 ```bash
-docker stop <container id>
-docker rm <container id>
+docker stop <container_id>
+docker rm <container_id>
 ```
-[Image7]
 
-## Deploiement WebAPP
+---
 
-Namespace et Deploiement WebAPP
+## ☸️ Déploiement sur Kubernetes
+
+### 📁 Création du namespace et déploiement de l’application web
 
 ```bash
 kubectl create ns icgroup 
 kubectl apply -f ic-webapp-deployment.yaml -n icgroup  
 kubectl apply -f ic-webapp-service.yaml -n icgroup  
 ```
-## Deploiement de la Base de données
+
+### 🗃️ Déploiement de PostgreSQL
 
 ```bash
 kubectl apply -f postgresql.yaml -n icgroup  
 ```
-Creation de l'utilisateur odoo dans la base de donnée 
+
+Création de l’utilisateur `odoo` :
 
 ```bash
-kubectl exec -it <pod name> -n icgroup -- bash
+kubectl exec -it <pod-name> -n icgroup -- bash
 psql -U postgres
-CREATE USER odoo WITH PASSWORD odoo;  
+CREATE USER odoo WITH PASSWORD 'odoo';
 ALTER USER odoo CREATEDB;
 ```
-[Image1]
 
-## Deploiement de Odoo
-```bash
-kubectl apply -f odoo.yaml -n icgroup  
-```
-## Deploiement de pgAdmin
-```bash
-kubectl apply -f pgadmin.yaml -n icgroup  
-```
-## Check ALL
+### ⚙️ Déploiement de Odoo
 
 ```bash
-kubectl get all -n icgroup  
+kubectl apply -f odoo.yaml -n icgroup
 ```
-[Image2]
-Manifest 
+
+### 🧰 Déploiement de pgAdmin
 
 ```bash
-kubectl get cm -n icgroup  
+kubectl apply -f pgadmin.yaml -n icgroup
 ```
-[Image3]
-ConfigMap  
+
+---
+
+## 🔍 Vérifications
+
+### 📦 État des ressources
 
 ```bash
-kubectl get cm -n icgroup  
+kubectl get all -n icgroup
 ```
-[Image4]
-Volume
 
-## Check GUI 
-
-Check Odoo 
+### 🛠️ ConfigMap
 
 ```bash
-http://192.177.10.140:30090 
+kubectl get cm -n icgroup
 ```
-Odoo Web interface OK
 
-Création de la base de donnée ODOO
-[Image5]
-
-[Image6]
-
-
-PGAdmin Web interface OK 
+### 💾 Volumes persistants
 
 ```bash
-http://192.177.10.140:30091 
+kubectl get pvc -n icgroup
 ```
-[Image7]
-PGAdmin Web interface OK
 
-BDD Connection
-[Image8]
+---
 
-Connection avec l'utilisateur ODOO
-[Image9]
-OK
+## 🌐 Interfaces Web
 
-Odoo Web interface
-```bash
-http://192.177.10.140:30001  
-```
-Access Web interface port 30001 :
-[Image10]
+### Odoo
 
+[http://192.168.10.42:30090](http://192.168.10.42:30090)
+➡️ Interface Odoo fonctionnelle
+➡️ Création de la base de données Odoo possible
 
-[Image11]
+### pgAdmin
 
-C'est bon
+[http://192.168.10.42:30091](http://192.168.10.42:30091)
+➡️ Interface pgAdmin disponible
+➡️ Connexion avec l'utilisateur `odoo` vérifiée
+
+---
+
+✅ **Déploiement complet et opérationnel !**
 

@@ -23,7 +23,7 @@ spec:
             - containerPort: 8080
           env:
             - name: ODOO_URL
-              value: "http://192.177.10.140:33077"
+              value: "http://192.168.10.42:33077"
             - name: PGADMIN_URL
-              value: "http://192.177.10.140:33078"
+              value: "http://192.168.10.42:33078"
 

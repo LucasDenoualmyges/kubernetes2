@@ -69,13 +69,13 @@ Build
 ```bash
 docker build -t ic-webapp:1.0
 ```
-![docker build](./images/build.png)
+[Image1]
 
 Check Image
 ```bash
 docker image ls
 ```
-![docker build](./images/image_ls.png)
+[Image2]
 
 Launch App
 ```bash
@@ -85,18 +85,17 @@ Check
 ```bash
 docker ps -a
 ```
-![docker ps](./images/run_ps.png)
+[Image3]
 
 Test Web Interface
 
 ```bash
 http://192.177.10.140:8080
 ```
-![web interface (docker)](./images/gui_test.png)
+[Image4]
 
 ODOO
-![odoo interface (docker)](./images/gui_test2.png)
-
+[Image5]
 Creation d'un tag et push sur notre compte DokcerHub
 
 ```bash
@@ -106,14 +105,14 @@ docker push aslimani94470/ic-webapp:1.0
 ```
 
 Check DockerHub 
-![dockerhub image](./images/docker_hub.png)
+[Image6]
 
 Docker stop & remove 
 ```bash
 docker stop <container id>
 docker rm <container id>
 ```
-![docker rm](./images/stop_rm_test.png)
+[Image7]
 
 ## Deploiement WebAPP
 
@@ -137,7 +136,7 @@ psql -U postgres
 CREATE USER odoo WITH PASSWORD odoo;  
 ALTER USER odoo CREATEDB;
 ```
-![New user & permission](./images/user_alter_bdd.png)
+[Image1]
 
 ## Deploiement de Odoo
 ```bash
@@ -152,19 +151,19 @@ kubectl apply -f pgadmin.yaml -n icgroup
 ```bash
 kubectl get all -n icgroup  
 ```
-![Toutes les ressources](./images/all_kubectl.png) 
+[Image2]
 Manifest 
 
 ```bash
 kubectl get cm -n icgroup  
 ```
-![configmap](./images/cm.png) 
+[Image3]
 ConfigMap  
 
 ```bash
 kubectl get cm -n icgroup  
 ```
-![pvc](./images/pvc.png) 
+[Image4]
 Volume
 
 ## Check GUI 
@@ -177,9 +176,9 @@ http://192.177.10.140:30090
 Odoo Web interface OK
 
 Création de la base de donnée ODOO
-![Odoo db creation](./images/odoo_gui.png) 
+[Image5]
 
-![Odoo interface](./images/odoo_create.png) 
+[Image6]
 
 
 PGAdmin Web interface OK 
@@ -187,14 +186,14 @@ PGAdmin Web interface OK
 ```bash
 http://192.177.10.140:30091 
 ```
-![pgAdmin login](./images/pgadmin_gui.png) 
+[Image7]
 PGAdmin Web interface OK
 
 BDD Connection
-![pgAdmin connected](./images/pgadmin_connect.png)
+[Image8]
 
 Connection avec l'utilisateur ODOO
-![pgAdmin connection to odoo](./images/pgadmin_odoo.png)   
+[Image9]
 OK
 
 Odoo Web interface
@@ -202,11 +201,10 @@ Odoo Web interface
 http://192.177.10.140:30001  
 ```
 Access Web interface port 30001 :
-![Interface web (30001)](./images/webapp.png)  
+[Image10]
 
 
-![Odoo login](./images/webapp_odoo_pgadmin.png)  
+[Image11]
 
-Good Job, c'est terminé !  
-
+C'est bon
 
